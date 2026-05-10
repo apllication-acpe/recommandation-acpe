@@ -35,6 +35,12 @@ class UpdateProfilRequest extends FormRequest
             'langues' => 'nullable|array',
             'types_contrat_preferes' => 'nullable|array',
             'secteurs_preferes' => 'nullable|array',
+            'new_experiences' => 'nullable|array',
+            'new_experiences.*.poste' => 'required_with:new_experiences|string|max:255',
+            'new_experiences.*.entreprise' => 'required_with:new_experiences|string|max:255',
+            'new_experiences.*.date_debut' => 'nullable|date',
+            'new_experiences.*.date_fin' => 'nullable|date',
+            'new_experiences.*.description' => 'nullable|string',
         ];
     }
 }

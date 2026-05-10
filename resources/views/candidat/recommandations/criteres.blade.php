@@ -9,14 +9,14 @@
                 <h1 class="text-3xl font-black text-white">Le Radar à Emploi</h1>
                 <p class="text-sm font-medium text-white/80 mt-2">Offres filtrées en temps réel selon votre profil et vos contraintes.</p>
             </div>
-            <button class="relative z-10 bg-white text-[#204263] px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-gray-50 hover:scale-105 transition-all duration-300">
-                Ajuster mon profil
-            </button>
+            <a href="{{ route('candidat.profil.edit') }}" class="relative z-10 bg-white text-[#204263] px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-gray-50 hover:scale-105 transition-all duration-300">
+                Modifier mon profil
+            </a>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <!-- Filter Sidebar -->
-            <div class="lg:col-span-1 space-y-6">
+            <form action="{{ route('candidat.reco.criteres') }}" method="GET" class="lg:col-span-1 space-y-6" id="filterForm">
                 <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                     <h3 class="text-[10px] font-black text-[#204263] uppercase tracking-widest mb-8">Vos critères</h3>
                     
@@ -24,10 +24,11 @@
                         <!-- Localisation -->
                         <div class="space-y-4">
                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Localisation</label>
-                            <select class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold text-[#204263] px-4 py-3 focus:ring-acpe-orange shadow-inner">
-                                <option>Dakar, Sénégal</option>
-                                <option>Thiès, Sénégal</option>
-                                <option>Saint-Louis, Sénégal</option>
+                            <select name="localisation" onchange="this.form.submit()" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold text-[#204263] px-4 py-3 focus:ring-acpe-orange shadow-inner">
+                                <option value="">Toute la zone</option>
+                                @foreach(['Dakar', 'Thiès', 'Saint-Louis', 'Brazzaville', 'Pointe-Noire', 'Abidjan', 'Libreville'] as $ville)
+                                    <option value="{{ $ville }}" {{ request('localisation') == $ville ? 'selected' : '' }}>{{ $ville }}</option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -35,12 +36,17 @@
                         <div class="space-y-4">
                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Type de contrat</label>
                             <div class="space-y-2">
-                                @foreach(['CDI', 'CDD', 'Stage', 'Freelance'] as $type)
+                                @php $selectedTypes = (array) request('types'); @endphp
+                                @foreach(['CDI', 'CDD', 'STAGE' => 'Stage', 'FREE' => 'Freelance'] as $code => $libelle)
+                                    @php $code = is_numeric($code) ? $libelle : $code; @endphp
                                     <label class="flex items-center space-x-3 cursor-pointer group">
-                                        <div class="h-5 w-5 border-2 border-gray-100 rounded-lg flex items-center justify-center group-hover:border-acpe-orange transition-colors">
-                                            @if($loop->first) <div class="h-2.5 w-2.5 bg-acpe-orange rounded-sm"></div> @endif
+                                        <input type="checkbox" name="types[]" value="{{ $code }}" onchange="this.form.submit()" 
+                                            {{ in_array($code, $selectedTypes) ? 'checked' : '' }}
+                                            class="hidden peer">
+                                        <div class="h-5 w-5 border-2 border-gray-100 rounded-lg flex items-center justify-center peer-checked:border-acpe-orange peer-checked:bg-orange-50 transition-colors">
+                                            <div class="h-2.5 w-2.5 bg-acpe-orange rounded-sm opacity-0 peer-checked:opacity-100 transition-opacity"></div>
                                         </div>
-                                        <span class="text-xs font-bold text-[#204263]">{{ $type }}</span>
+                                        <span class="text-xs font-bold text-[#204263]">{{ is_numeric($code) ? $libelle : $libelle }}</span>
                                     </label>
                                 @endforeach
                             </div>
@@ -48,16 +54,21 @@
 
                         <!-- Salaire souhaité -->
                         <div class="space-y-4">
-                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Fourchette salariale (CFA)</label>
-                            <input type="range" class="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-acpe-orange">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Min Salaire: <span id="salaryValue" class="text-acpe-orange">{{ request('salaire', 150) }}K</span></label>
+                            <input type="range" name="salaire" min="150" max="2000" step="50" value="{{ request('salaire', 150) }}"
+                                oninput="document.getElementById('salaryValue').innerText = this.value + 'K'"
+                                onchange="this.form.submit()"
+                                class="w-full h-1.5 bg-gray-100 rounded-lg appearance-none cursor-pointer accent-acpe-orange">
                             <div class="flex justify-between text-[10px] font-black text-gray-300 uppercase">
                                 <span>150k</span>
                                 <span>2M+</span>
                             </div>
                         </div>
+
+                        <a href="{{ route('candidat.reco.criteres') }}" class="block text-center text-[9px] font-black text-gray-300 uppercase hover:text-red-400 mt-4 transition-colors">Réinitialiser</a>
                     </div>
                 </div>
-            </div>
+            </form>
 
             <!-- Results Area -->
             <div class="lg:col-span-3 space-y-6">
@@ -92,7 +103,7 @@
                                     <div class="flex justify-between items-start mb-2">
                                         <div>
                                             <h3 class="text-lg font-black text-[#204263] mb-1 group-hover:text-acpe-blue transition-colors">{{ $reco['offre']->titre }}</h3>
-                                            <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ $reco['offre']->entreprise->raison_sociale ?? 'Entreprise Anonyme' }} • {{ $reco['offre']->lieu ?? 'Non spécifié' }}</p>
+                                            <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">{{ $reco['offre']->entreprise->raison_sociale ?? 'Entreprise Anonyme' }} • {{ $reco['offre']->localisations->first()->ville ?? 'Sénégal' }}</p>
                                         </div>
                                         
                                         <!-- Score Badge -->

@@ -5,7 +5,7 @@
         <!-- Header / Navigation -->
         <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2 text-sm">
-                <a href="{{ route('support') }}" class="text-gray-400 hover:text-acpe-blue transition-colors">Support</a>
+                <a href="{{ route('admin.support') }}" class="text-gray-400 hover:text-acpe-blue transition-colors">Support</a>
                 <i class="fa-solid fa-chevron-right text-[10px] text-gray-300"></i>
                 <span class="text-[#204263] font-bold">Ticket #{{ $ticket->reference }}</span>
             </div>
@@ -19,7 +19,7 @@
                 @endif
                 
                 @if($ticket->statut !== 'resolu' && $ticket->statut !== 'ferme')
-                <form action="{{ route('support.ticket.close', $ticket->id) }}" method="POST" onsubmit="return confirm('Clôturer ce ticket ?');">
+                <form action="{{ route('admin.support.ticket.close', $ticket->id) }}" method="POST" onsubmit="return confirm('Clôturer ce ticket ?');">
                     @csrf
                     <button type="submit" class="px-4 py-2 bg-emerald-50 text-emerald-600 border border-emerald-100 text-xs font-bold rounded-xl shadow-sm hover:bg-emerald-100 transition-all">
                         Marquer comme résolu
@@ -86,7 +86,7 @@
                         <i class="fa-solid fa-paper-plane text-acpe-blue"></i>
                         <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest">Votre réponse</h3>
                     </div>
-                    <form action="{{ route('support.ticket.reply', $ticket->id) }}" method="POST">
+                    <form action="{{ route('admin.support.ticket.reply', $ticket->id) }}" method="POST">
                         @csrf
                         <textarea name="message" rows="5" class="w-full p-4 bg-gray-50 border-none rounded-2xl text-sm focus:ring-2 focus:ring-acpe-blue/20 placeholder:text-gray-300" placeholder="Rédigez votre réponse ici..." required></textarea>
                         <div class="mt-4 flex items-center justify-end">

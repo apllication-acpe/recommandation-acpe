@@ -53,8 +53,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 block">Type de contrat</label>
-                            <select name="id_type_cont" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-acpe-blue/20">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 block">Type de contrat *</label>
+                            <select name="id_type_cont" required class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-acpe-blue/20">
                                 <option value="">— Sélectionner un type —</option>
                                 @foreach($typesContrat as $type)
                                     <option value="{{ $type->id_type_cont }}" {{ old('id_type_cont') == $type->id_type_cont ? 'selected' : '' }}>
@@ -63,11 +63,22 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 block">Localisation *</label>
+                            <select name="id_localisation" required class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-acpe-blue/20">
+                                <option value="">— Sélectionner une ville —</option>
+                                @foreach($localisations as $loc)
+                                    <option value="{{ $loc->id_localisation }}" {{ old('id_localisation') == $loc->id_localisation ? 'selected' : '' }}>
+                                        {{ $loc->ville }} ({{ $loc->pays }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
 
                     <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 block">Secteur d'activité</label>
-                        <select name="id_sect_act" class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-acpe-blue/20">
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 block">Secteur d'activité *</label>
+                        <select name="id_sect_act" required class="w-full px-4 py-3 bg-gray-50 border-none rounded-xl text-sm focus:ring-2 focus:ring-acpe-blue/20">
                             <option value="">— Sélectionner un secteur —</option>
                             @foreach($secteurs as $secteur)
                                 <option value="{{ $secteur->id_sect_act }}" {{ old('id_sect_act') == $secteur->id_sect_act ? 'selected' : '' }}>

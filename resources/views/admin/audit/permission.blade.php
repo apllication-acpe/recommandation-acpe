@@ -9,9 +9,9 @@
                 <p class="text-gray-400 text-sm">Suivez les modifications de droits d'accès et les attributions de rôles.</p>
             </div>
             <div class="flex items-center space-x-3">
-                <button class="px-4 py-2 bg-white border border-gray-100 text-[#204263] text-sm font-bold rounded-xl shadow-sm hover:bg-gray-50 transition-all">
+                <a href="{{ route('admin.audit.permissions.export') }}" class="px-4 py-2 bg-white border border-gray-100 text-[#204263] text-sm font-bold rounded-xl shadow-sm hover:bg-gray-50 transition-all">
                     Exporter l'audit
-                </button>
+                </a>
             </div>
         </div>
 

@@ -177,6 +177,7 @@ Route::middleware(['auth'])->group(function () {
         // Support
         Route::get('/support', [AdminDashboardController::class, 'support'])->name('support');
         Route::get('/support/notifier', [AdminDashboardController::class, 'notifier'])->name('support.notifier');
+        Route::post('/support/notifier', [AdminDashboardController::class, 'sendNotification'])->name('support.notifier.send');
         Route::get('/support/ticket/{ticket}', [AdminDashboardController::class, 'showTicket'])->name('support.ticket');
         Route::post('/support/ticket/{ticket}/reply', [AdminDashboardController::class, 'replyTicket'])->name('support.ticket.reply');
         Route::post('/support/ticket/{ticket}/close', [AdminDashboardController::class, 'closeTicket'])->name('support.ticket.close');
@@ -198,6 +199,11 @@ Route::middleware(['auth'])->group(function () {
 
         // Roles
         Route::get('/roles', [AdminDashboardController::class, 'roles'])->name('roles');
+        Route::get('/roles/matrix', [AdminDashboardController::class, 'rolesMatrix'])->name('roles.matrix');
+
+        // Audit & Sécurité
+        Route::get('/audit/permissions', [AdminDashboardController::class, 'auditPermissions'])->name('audit.permissions');
+        Route::get('/audit/permissions/export', [AdminDashboardController::class, 'exportAudit'])->name('audit.permissions.export');
     });
 
 

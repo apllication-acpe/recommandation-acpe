@@ -19,7 +19,7 @@
                             </p>
                             <p class="text-sm font-bold text-gray-500 flex items-center">
                                 <i class="fa-solid fa-location-dot mr-2 text-acpe-orange"></i>
-                                {{ $offre->lieu ?? 'Non spécifié' }}
+                                {{ $offre->localisations->first()->ville ?? 'Sénégal' }}
                             </p>
                             <p class="text-sm font-bold text-gray-500 flex items-center">
                                 <i class="fa-solid fa-calendar-day mr-2 text-acpe-orange"></i>

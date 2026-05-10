@@ -93,7 +93,7 @@
                                 
                                 <div class="mt-4 flex flex-wrap gap-2">
                                     <span class="px-2 py-1 bg-gray-50 text-gray-400 text-[9px] font-black rounded-lg uppercase border border-gray-100">{{ $reco->offre->typeContrat->libelle ?? 'CDI' }}</span>
-                                    <span class="px-2 py-1 bg-gray-50 text-gray-400 text-[9px] font-black rounded-lg uppercase border border-gray-100">{{ $reco->offre->lieu ?? 'Dakar' }}</span>
+                                    <span class="px-2 py-1 bg-gray-50 text-gray-400 text-[9px] font-black rounded-lg uppercase border border-gray-100">{{ $reco->offre->localisations->first()->ville ?? 'Sénégal' }}</span>
                                 </div>
                             </div>
                             

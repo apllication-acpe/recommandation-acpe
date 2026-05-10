@@ -68,11 +68,11 @@
                         </div>
                     </div>
                     <div class="mt-4 md:mt-0 flex items-center space-x-3">
-                        <a href="{{ route('support.ticket', $ticket->id) }}" class="px-4 py-2 bg-acpe-blue text-white text-[10px] font-black uppercase rounded-lg hover:bg-acpe-dark-blue transition-all">
+                        <a href="{{ route('admin.support.ticket', $ticket->id) }}" class="px-4 py-2 bg-acpe-blue text-white text-[10px] font-black uppercase rounded-lg hover:bg-acpe-dark-blue transition-all">
                             Voir / Répondre
                         </a>
                         @if($ticket->statut !== 'resolu' && $ticket->statut !== 'ferme')
-                        <form action="{{ route('support.ticket.close', $ticket->id) }}" method="POST" class="inline" onsubmit="return confirm('Clôturer ce ticket ?');">
+                        <form action="{{ route('admin.support.ticket.close', $ticket->id) }}" method="POST" class="inline" onsubmit="return confirm('Clôturer ce ticket ?');">
                             @csrf
                             <button type="submit" class="p-2 text-gray-300 hover:text-red-500 transition-colors" title="Marquer comme résolu">
                                 <i class="fa-solid fa-check-double"></i>

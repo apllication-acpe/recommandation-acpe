@@ -7,14 +7,33 @@ use Illuminate\Support\Facades\Auth;
 
 class RecommandationController extends Controller
 {
-    public function criteres()
+    public function criteres(\Illuminate\Http\Request $request)
     {
         $demandeur = Auth::user()->demandeur;
         
-        // Récupérer toutes les offres actives avec leurs relations
-        $offres = \App\Models\Offre::where('active', true)
-            ->with(['entreprise', 'typeContrat', 'secteurActivite'])
-            ->get();
+        $query = \App\Models\Offre::where('active', true)
+            ->with(['entreprise', 'typeContrat', 'secteurActivite', 'localisations']);
+
+        // Filtre Localisation
+        if ($request->filled('localisation')) {
+            $query->whereHas('localisations', function($q) use ($request) {
+                $q->where('ville', 'LIKE', '%' . $request->localisation . '%');
+            });
+        }
+
+        // Filtre Type de Contrat
+        if ($request->filled('types')) {
+            $query->whereHas('typeContrat', function($q) use ($request) {
+                $q->whereIn('code', (array) $request->types);
+            });
+        }
+
+        // Filtre Salaire
+        if ($request->filled('salaire')) {
+            $query->where('salaire_min', '>=', $request->salaire * 1000); // Conversion K en unité
+        }
+
+        $offres = $query->get();
 
         $recommandations = collect();
 
@@ -98,7 +117,7 @@ class RecommandationController extends Controller
         
         // Récupérer toutes les offres actives
         $offres = \App\Models\Offre::where('active', true)
-            ->with(['entreprise', 'typeContrat', 'secteurActivite'])
+            ->with(['entreprise', 'typeContrat', 'secteurActivite', 'localisations'])
             ->get();
 
         $recommandations = collect();

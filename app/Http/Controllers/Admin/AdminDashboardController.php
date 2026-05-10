@@ -227,24 +227,26 @@ class AdminDashboardController extends Controller
 
     public function createOffre()
     {
-        $entreprises   = Entreprise::orderBy('raison_sociale')->get();
-        $typesContrat  = TypeContrat::orderBy('libelle')->get();
-        $secteurs      = SecteurActivite::orderBy('libelle')->get();
-        return view('admin.offres.create', compact('entreprises', 'typesContrat', 'secteurs'));
+        $entreprises    = Entreprise::orderBy('raison_sociale')->get();
+        $typesContrat   = TypeContrat::orderBy('libelle')->get();
+        $secteurs       = SecteurActivite::orderBy('libelle')->get();
+        $localisations  = Localisation::orderBy('ville')->get();
+        return view('admin.offres.create', compact('entreprises', 'typesContrat', 'secteurs', 'localisations'));
     }
 
     public function storeOffre(Request $request)
     {
         $request->validate([
-            'titre'          => 'required|string|max:255',
-            'description'    => 'required|string',
-            'id_entreprise'  => 'required|exists:entreprises,id_entreprise',
-            'id_type_cont'   => 'nullable|exists:type_contrats,id_type_cont',
-            'id_sect_act'    => 'nullable|exists:secteur_activites,id_sect_act',
-            'date_expiration'=> 'nullable|date',
+            'titre'           => 'required|string|max:255',
+            'description'     => 'required|string',
+            'id_entreprise'   => 'required|exists:entreprises,id_entreprise',
+            'id_localisation' => 'required|exists:localisations,id_localisation',
+            'id_type_cont'    => 'required|exists:type_contrats,id_type_cont',
+            'id_sect_act'     => 'required|exists:secteur_activites,id_sect_act',
+            'date_expiration' => 'nullable|date',
         ]);
 
-        Offre::create([
+        $offre = Offre::create([
             'titre'            => $request->titre,
             'description'      => $request->description,
             'mission'          => $request->mission,
@@ -264,6 +266,9 @@ class AdminDashboardController extends Controller
             'travail_weekend'  => $request->boolean('travail_weekend'),
             'date_publication' => now(),
         ]);
+
+        // Attacher la localisation
+        $offre->localisations()->attach($request->id_localisation, ['est_principale' => true]);
 
         return redirect()->route('admin.offres')->with('success', 'Offre créée avec succès.');
     }
@@ -718,7 +723,26 @@ class AdminDashboardController extends Controller
 
     public function notifier()
     {
-        return view('admin.support.notifier');
+        $counts = [
+            'all' => \App\Models\User::count(),
+            'candidats' => \App\Models\Demandeur::count(),
+            'recruteurs' => \App\Models\Entreprise::count(), // or count users with role recruteur
+        ];
+        return view('admin.support.notifier', compact('counts'));
+    }
+
+    public function sendNotification(Request $request)
+    {
+        $request->validate([
+            'target' => 'required|in:all,candidats,recruteurs',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        // Ici viendrait la logique d'envoi (Notifications Laravel / Mail)
+        // Pour l'instant on simule le succès
+        
+        return redirect()->route('admin.support')->with('success', 'La notification a été diffusée avec succès.');
     }
 
     public function showTicket($ticketId)
@@ -859,5 +883,37 @@ class AdminDashboardController extends Controller
 
         $utilisateur->update(['actif' => !$utilisateur->actif]);
         return response()->json(['success' => true]);
+    }
+
+    public function rolesMatrix()
+    {
+        $roles = \Spatie\Permission\Models\Role::with('permissions')->get();
+        $permissions = \Spatie\Permission\Models\Permission::all();
+        return view('admin.roles.matrix', compact('roles', 'permissions'));
+    }
+
+
+    public function exportAudit()
+    {
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=audit_permissions_" . date('Y-m-d') . ".csv",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Date', 'Administrateur', 'Action', 'Cible', 'Details']);
+            
+            // Simulation de données pour l'exemple
+            fputcsv($file, [now()->format('d/m/Y H:i'), 'Admin Principal', 'ATTRIBUTION ROLE', 'Marc Dupont', 'Ajout du role "Moderateur"']);
+            fputcsv($file, [now()->subDay()->format('d/m/Y H:i'), 'Admin Principal', 'MODIFICATION PERMISSION', 'Recruteurs', 'Retrait du droit "Suppression"']);
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

@@ -28,14 +28,14 @@
                         @forelse($demandeur->competences->take(5) as $comp)
                             <span class="px-4 py-2 bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-xl border border-white/10">{{ $comp->libelle }}</span>
                         @empty
-                            <span class="px-4 py-2 bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-xl border border-white/10">Profil à compléter</span>
+                            <a href="{{ route('candidat.profil.edit') }}" class="px-4 py-2 bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-xl border border-white/20 hover:bg-white/20 transition-colors">Profil à compléter</a>
                         @endforelse
                     </div>
                 </div>
                 <div class="text-center md:text-right">
-                    <button class="bg-acpe-orange text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-orange-500/40 hover:scale-105 transition-all">
+                    <a href="{{ route('candidat.reco.professionnelle') }}" class="inline-block bg-acpe-orange text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-orange-500/40 hover:scale-105 transition-all">
                         Rafraîchir l'analyse
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>

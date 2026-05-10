@@ -14,7 +14,8 @@ class ProfilController extends Controller
         $demandeur = Auth::user()->demandeur;
         
         $nationalites = \App\Models\Nationalite::orderBy('libelle')->get();
-        $allQualifications = \App\Models\Qualification::all();
+        $allQualifications = \App\Models\Qualification::orderBy('intitule')->get();
+        $allDiplomes = \App\Models\Diplome::orderBy('libelle')->get();
         $allCompetences = \App\Models\Competence::all();
         $allLangues = \App\Models\Langue::all();
         $allTypeContrats = \App\Models\TypeContrat::all();
@@ -24,6 +25,7 @@ class ProfilController extends Controller
             'demandeur', 
             'nationalites', 
             'allQualifications', 
+            'allDiplomes',
             'allCompetences', 
             'allLangues',
             'allTypeContrats',
@@ -69,6 +71,9 @@ class ProfilController extends Controller
         if ($request->has('qualifications')) {
             $demandeur->qualifications()->sync($request->qualifications);
         }
+        if ($request->has('diplomes')) {
+            $demandeur->diplomes()->sync($request->diplomes);
+        }
         if ($request->has('competences')) {
             $demandeur->competences()->sync($request->competences);
         }
@@ -80,6 +85,19 @@ class ProfilController extends Controller
         }
         if ($request->has('secteurs_preferes')) {
             $demandeur->secteursActivitePreferes()->sync($request->secteurs_preferes);
+        }
+
+        // Enregistrement des nouvelles expériences
+        if ($request->filled('new_experiences')) {
+            foreach ($request->new_experiences as $expData) {
+                $demandeur->experiences()->create([
+                    'poste_occupe' => $expData['poste'],
+                    'entreprise' => $expData['entreprise'],
+                    'date_debut' => $expData['date_debut'],
+                    'date_fin' => $expData['date_fin'],
+                    'description' => $expData['description'],
+                ]);
+            }
         }
 
         return redirect()->back()->with('success', 'Votre profil a été mis à jour avec succès.');

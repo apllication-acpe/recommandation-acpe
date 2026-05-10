@@ -1,12 +1,29 @@
 <x-candidat-layout>
     @section('title', 'Mon Profil & CV - Demandeur')
 
+    <div x-data="{ 
+            section: 'exp',
+            showExpModal: false,
+            newExps: [],
+            isDebutant: {{ ($demandeur->annees_experience == 0 && $demandeur->annees_experience !== null) ? 'true' : 'false' }},
+            tmpPoste: '', tmpEntreprise: '', tmpDebut: '', tmpFin: '', tmpDesc: '',
+            addExp() {
+                if(this.tmpPoste && this.tmpEntreprise) {
+                    this.newExps.push({ poste: this.tmpPoste, entreprise: this.tmpEntreprise, debut: this.tmpDebut, fin: this.tmpFin, desc: this.tmpDesc });
+                    this.showExpModal = false;
+                    this.tmpPoste = ''; this.tmpEntreprise = ''; this.tmpDebut = ''; this.tmpFin = ''; this.tmpDesc = '';
+                } else {
+                    alert('Veuillez remplir le poste et l\'entreprise');
+                }
+            }
+        }">
     <form action="{{ route('candidat.profil.update') }}" method="POST" enctype="multipart/form-data" class="max-w-5xl mx-auto space-y-8 animate-slide-up">
         @csrf
         @method('PUT')
         
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-black text-[#204263]">Mon Profil & CV - Demandeur</h1>
+            <div x-show="showExpModal" class="bg-red-500 text-white px-4 py-1 rounded text-[10px] font-bold animate-pulse">DEBUG: MODAL ACTIF</div>
             <div class="flex space-x-3">
                 <a href="{{ route('candidat.dashboard') }}" class="px-6 py-2.5 bg-white border border-gray-100 text-gray-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-50 transition-all shadow-sm flex items-center">Annuler</a>
                 <button type="submit" class="px-6 py-2.5 bg-acpe-orange text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-orange-500/20 hover:scale-105 transition-all">Enregistrer les modifications</button>
@@ -118,7 +135,7 @@
                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Téléphone</label>
                             <input type="text" name="telephone" value="{{ old('telephone', $demandeur->user->telephone) }}" placeholder="Ex: +221 77 000 00 00" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold text-[#204263] px-4 py-3 focus:ring-acpe-orange shadow-inner">
                         </div>
-                        <div class="space-y-2" x-data="{ isDebutant: {{ ($demandeur->annees_experience == 0 && $demandeur->annees_experience !== null) ? 'true' : 'false' }} }">
+                        <div class="space-y-2">
                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center justify-between">
                                 Années d'expérience
                                 <label class="flex items-center space-x-2 cursor-pointer text-acpe-orange">
@@ -227,22 +244,26 @@
                 </div>
 
                 <!-- Expériences & Diplômes (Tabs style) -->
-                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden" x-data="{ section: 'exp' }">
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="flex border-b border-gray-50 bg-gray-50/30">
                         <button type="button" @click="section = 'exp'" :class="section === 'exp' ? 'border-acpe-orange text-acpe-orange bg-white' : 'border-transparent text-gray-400 hover:text-gray-600'" class="px-8 py-4 text-[10px] font-black border-b-2 transition-all uppercase tracking-widest">Expériences</button>
                         <button type="button" @click="section = 'edu'" :class="section === 'edu' ? 'border-acpe-orange text-acpe-orange bg-white' : 'border-transparent text-gray-400 hover:text-gray-600'" class="px-8 py-4 text-[10px] font-black border-b-2 transition-all uppercase tracking-widest">Diplômes</button>
+                        <button type="button" @click="section = 'qual'" :class="section === 'qual' ? 'border-acpe-orange text-acpe-orange bg-white' : 'border-transparent text-gray-400 hover:text-gray-600'" class="px-8 py-4 text-[10px] font-black border-b-2 transition-all uppercase tracking-widest">Qualifications</button>
                         <button type="button" @click="section = 'skill'" :class="section === 'skill' ? 'border-acpe-orange text-acpe-orange bg-white' : 'border-transparent text-gray-400 hover:text-gray-600'" class="px-8 py-4 text-[10px] font-black border-b-2 transition-all uppercase tracking-widest">Compétences</button>
                         <button type="button" @click="section = 'lang'" :class="section === 'lang' ? 'border-acpe-orange text-acpe-orange bg-white' : 'border-transparent text-gray-400 hover:text-gray-600'" class="px-8 py-4 text-[10px] font-black border-b-2 transition-all uppercase tracking-widest">Langues</button>
                     </div>
 
-                    <div class="p-10">
                         <div x-show="section === 'exp'" class="space-y-6">
                             <div class="flex justify-between items-center mb-4">
                                 <p class="text-[10px] text-gray-400 font-bold italic">Racontez votre parcours professionnel</p>
-                                <button type="button" class="h-8 w-8 bg-emerald-50 text-emerald-500 rounded-lg flex items-center justify-center hover:scale-110 transition-transform">
-                                    <i class="fa-solid fa-plus text-xs"></i>
+                                <button type="button" onclick="ouvrirModalExp()" class="h-10 w-10 bg-acpe-orange text-white rounded-xl flex items-center justify-center hover:scale-110 transition-transform shadow-lg shadow-orange-500/20">
+                                    <i class="fa-solid fa-plus text-sm"></i>
                                 </button>
                             </div>
+                            
+                            <!-- Conteneur pour les nouvelles expériences (Vanilla JS) -->
+                            <div id="listeNouvellesExps" class="space-y-4"></div>
+
                             @forelse($demandeur->experiences as $experience)
                                 <div class="p-6 bg-gray-50 rounded-2xl border border-gray-100 flex items-start space-x-6">
                                     <div class="h-12 w-12 bg-white rounded-xl flex items-center justify-center text-[#204263] border border-gray-100 shadow-sm">
@@ -255,13 +276,34 @@
                                     </div>
                                 </div>
                             @empty
-                                <p class="text-center text-[10px] font-bold text-gray-300 py-8">Aucune expérience renseignée</p>
+                                <div x-show="newExps.length === 0">
+                                    <p class="text-center text-[10px] font-bold text-gray-300 py-8">Aucune expérience renseignée</p>
+                                </div>
                             @endforelse
                         </div>
 
                         <div x-show="section === 'edu'" x-cloak class="space-y-6">
                             <div class="flex justify-between items-center mb-4">
-                                <p class="text-[10px] text-gray-400 font-bold italic">Sélectionnez vos diplômes et certifications</p>
+                                <p class="text-[10px] text-gray-400 font-bold italic">Sélectionnez vos diplômes d'état</p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                @foreach($allDiplomes as $diplome)
+                                    <label class="flex items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer hover:border-acpe-orange transition-colors">
+                                        <input type="checkbox" name="diplomes[]" value="{{ $diplome->id_diplome }}" 
+                                            {{ $demandeur->diplomes->contains($diplome->id_diplome) ? 'checked' : '' }}
+                                            class="rounded border-gray-300 text-acpe-orange focus:ring-acpe-orange h-4 w-4 mr-3">
+                                        <div class="min-w-0">
+                                            <span class="text-[10px] font-black text-[#204263] uppercase block truncate">{{ $diplome->libelle }}</span>
+                                            <span class="text-[9px] text-gray-400">{{ $diplome->niveau }} {{ $diplome->specialite }}</span>
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div x-show="section === 'qual'" x-cloak class="space-y-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <p class="text-[10px] text-gray-400 font-bold italic">Sélectionnez vos qualifications et certifications</p>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 @foreach($allQualifications as $qual)
@@ -270,8 +312,7 @@
                                             {{ $demandeur->qualifications->contains($qual->id_qualification) ? 'checked' : '' }}
                                             class="rounded border-gray-300 text-acpe-orange focus:ring-acpe-orange h-4 w-4 mr-3">
                                         <div class="min-w-0">
-                                            <span class="text-[10px] font-black text-[#204263] uppercase block truncate">{{ $qual->libelle }}</span>
-                                            <span class="text-[9px] text-gray-400">{{ $qual->niveau }}</span>
+                                            <span class="text-[10px] font-black text-[#204263] uppercase block truncate">{{ $qual->intitule ?? $qual->libelle ?? $qual->designation }}</span>
                                         </div>
                                     </label>
                                 @endforeach
@@ -313,8 +354,100 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal Ajouter Expérience (Vanilla JS pour forcer l'affichage) -->
+        <div id="modalExperience" 
+                class="fixed inset-0 z-[10000] hidden items-center justify-center p-4 bg-[#204263]/90">
+            <div class="bg-white w-full max-w-md rounded-3xl p-8 shadow-2xl space-y-6 relative border-4 border-acpe-orange">
+                <h4 class="text-sm font-black text-[#204263] uppercase tracking-widest">Ajouter une expérience</h4>
+                <div class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-black text-gray-400 uppercase">Poste occupé</label>
+                        <input type="text" x-model="tmpPoste" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold px-4 py-3 focus:ring-acpe-orange">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-black text-gray-400 uppercase">Entreprise</label>
+                        <input type="text" x-model="tmpEntreprise" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold px-4 py-3 focus:ring-acpe-orange">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black text-gray-400 uppercase">Début</label>
+                            <input type="date" x-model="tmpDebut" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold px-4 py-3 focus:ring-acpe-orange">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black text-gray-400 uppercase">Fin</label>
+                            <input type="date" x-model="tmpFin" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold px-4 py-3 focus:ring-acpe-orange">
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-black text-gray-400 uppercase">Description</label>
+                        <textarea x-model="tmpDesc" rows="3" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold px-4 py-3 focus:ring-acpe-orange"></textarea>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <button type="button" onclick="fermerModalExp()" class="flex-1 py-3 bg-gray-100 text-gray-500 rounded-xl text-[10px] font-black uppercase">Annuler</button>
+                    <button type="button" onclick="validerAjoutExp()" class="flex-1 py-3 bg-acpe-orange text-white rounded-xl text-[10px] font-black uppercase">Ajouter</button>
+                </div>
+            </div>
+        </div>
     </form>
+    </div>
     <script>
+        let expCount = 0;
+
+        function ouvrirModalExp() {
+            document.getElementById('modalExperience').style.display = 'flex';
+        }
+        function fermerModalExp() {
+            document.getElementById('modalExperience').style.display = 'none';
+        }
+        function validerAjoutExp() {
+            const poste = document.querySelector('[x-model="tmpPoste"]').value;
+            const entreprise = document.querySelector('[x-model="tmpEntreprise"]').value;
+            const debut = document.querySelector('[x-model="tmpDebut"]').value;
+            const fin = document.querySelector('[x-model="tmpFin"]').value;
+            const desc = document.querySelector('[x-model="tmpDesc"]').value;
+
+            if(!poste || !entreprise) {
+                alert('Veuillez remplir le poste et l\'entreprise');
+                return;
+            }
+
+            const container = document.getElementById('listeNouvellesExps');
+            const html = `
+                <div class="p-6 bg-emerald-50/30 rounded-2xl border border-emerald-100 flex items-start space-x-6 relative animate-slide-up">
+                    <input type="hidden" name="new_experiences[${expCount}][poste]" value="${poste}">
+                    <input type="hidden" name="new_experiences[${expCount}][entreprise]" value="${entreprise}">
+                    <input type="hidden" name="new_experiences[${expCount}][date_debut]" value="${debut}">
+                    <input type="hidden" name="new_experiences[${expCount}][date_fin]" value="${fin}">
+                    <input type="hidden" name="new_experiences[${expCount}][description]" value="${desc}">
+                    
+                    <div class="h-12 w-12 bg-white rounded-xl flex items-center justify-center text-emerald-500 border border-emerald-100 shadow-sm">
+                        <i class="fa-solid fa-briefcase text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between">
+                            <h4 class="text-xs font-black text-[#204263] uppercase">${poste}</h4>
+                            <button type="button" onclick="this.closest('.relative').remove()" class="text-red-300 hover:text-red-500">
+                                <i class="fa-solid fa-trash text-[10px]"></i>
+                            </button>
+                        </div>
+                        <p class="text-[10px] font-bold text-acpe-orange mt-1">${entreprise}</p>
+                        <p class="text-[10px] text-gray-400 mt-2 font-medium leading-relaxed">${desc}</p>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+            expCount++;
+            fermerModalExp();
+            
+            // Reset fields
+            document.querySelector('[x-model="tmpPoste"]').value = '';
+            document.querySelector('[x-model="tmpEntreprise"]').value = '';
+            document.querySelector('[x-model="tmpDebut"]').value = '';
+            document.querySelector('[x-model="tmpFin"]').value = '';
+            document.querySelector('[x-model="tmpDesc"]').value = '';
+        }
         function previewFile() {
             const preview = document.getElementById('preview-image');
             const file = document.getElementById('photo').files[0];
