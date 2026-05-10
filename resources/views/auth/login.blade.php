@@ -6,7 +6,11 @@
     <title>Connexion - ACPE Reco</title>
     
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+        <!-- Favicon ACPE -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.png') }}"><link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
@@ -32,12 +36,12 @@
     <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
         
         <!-- Top Header (Correspondance avec l'image claire) -->
-        <div class="bg-[#7a9bb8] border-b-[6px] border-[#e3af8b] px-6 py-10 text-center relative">
-            <div class="flex items-center justify-center space-x-2 text-white mb-3">
-                <i class="fa-solid fa-arrow-right-to-bracket text-2xl"></i>
-                <h2 class="text-2xl font-bold tracking-wide">Connexion</h2>
+        <div class="bg-[#204263] border-b-4 border-[#eda268] px-6 py-10 text-center relative">
+            <div class="flex items-center justify-center space-x-3 text-white mb-1">
+                <i class="fa-solid fa-arrow-right-to-bracket text-xl text-[#eda268]"></i>
+                <h1 class="text-2xl font-bold tracking-wide">Connexion</h1>
             </div>
-            <p class="text-white text-sm font-semibold tracking-wide">Accédez à vos recommandations d'offres</p>
+            <p class="text-[#7a9bb8] text-xs font-medium mt-1">Accédez à vos recommandations d'offres</p>
         </div>
 
         <!-- Formulaire -->
@@ -58,8 +62,8 @@
 
                 <!-- Email Address -->
                 <div>
-                    <label for="email" class="block text-sm font-bold text-[#3b5266] mb-2">Adresse e-mail</label>
-                    <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#7a9bb8] focus-within:ring-1 focus-within:ring-[#7a9bb8] transition-all bg-white">
+                    <label for="email" class="block text-xs font-bold text-[#204263] uppercase tracking-wider mb-2">Adresse e-mail</label>
+                    <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#eda268] focus-within:ring-1 focus-within:ring-[#eda268]/30 transition-all bg-white">
                         <span class="inline-flex items-center px-4 rounded-l-md border-r border-[#c7d2db] text-[#8299b1] bg-[#f8fafc]">
                             <i class="fa-regular fa-envelope text-lg"></i>
                         </span>
@@ -70,8 +74,8 @@
 
                 <!-- Password -->
                 <div>
-                    <label for="password" class="block text-sm font-bold text-[#3b5266] mb-2">Mot de passe</label>
-                    <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#7a9bb8] focus-within:ring-1 focus-within:ring-[#7a9bb8] transition-all bg-white">
+                    <label for="password" class="block text-xs font-bold text-[#204263] uppercase tracking-wider mb-2">Mot de passe</label>
+                    <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#eda268] focus-within:ring-1 focus-within:ring-[#eda268]/30 transition-all bg-white">
                         <span class="inline-flex items-center px-4 rounded-l-md border-r border-[#c7d2db] text-[#8299b1] bg-[#f8fafc]">
                             <i class="fa-solid fa-lock text-lg"></i>
                         </span>
@@ -80,10 +84,15 @@
                     </div>
                 </div>
 
-                <!-- Remember Me (Hidden for exact visual match, but useful) -->
-                <div class="flex items-center justify-end">
+                <!-- Remember Me & Forgot Password -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember_me" type="checkbox" name="remember" class="h-4 w-4 text-[#eda268] focus:ring-[#eda268] border-gray-300 rounded">
+                        <label for="remember_me" class="ml-2 block text-xs text-[#8299b1] font-medium">Se souvenir de moi</label>
+                    </div>
+
                     @if (Route::has('password.request'))
-                        <a class="text-xs text-[#8299b1] hover:text-[#5d85a6] font-medium transition-colors hidden" href="{{ route('password.request') }}">
+                        <a class="text-xs text-[#5d85a6] hover:text-[#3b5266] font-semibold transition-colors" href="{{ route('password.request') }}">
                             Mot de passe oublié ?
                         </a>
                     @endif

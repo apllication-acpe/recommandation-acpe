@@ -598,13 +598,19 @@ class AdminDashboardController extends Controller
     public function editLangue(Langue $langue) { return view('admin.config.langues.edit', compact('langue')); }
     public function storeLangue(Request $request)
     {
-        $request->validate(['libelle' => 'required|string|max:255']);
+        $request->validate([
+            'libelle' => 'required|string|max:255',
+            'code_iso' => 'required|string|max:5',
+        ]);
         Langue::create($request->only('libelle', 'code_iso'));
         return redirect()->route('admin.config.langues')->with('success', 'Langue ajoutée.');
     }
     public function updateLangue(Request $request, Langue $langue)
     {
-        $request->validate(['libelle' => 'required|string|max:255']);
+        $request->validate([
+            'libelle' => 'required|string|max:255',
+            'code_iso' => 'required|string|max:5',
+        ]);
         $langue->update($request->only('libelle', 'code_iso'));
         return redirect()->route('admin.config.langues')->with('success', 'Langue mise à jour.');
     }

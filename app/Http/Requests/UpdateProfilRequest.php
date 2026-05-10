@@ -18,6 +18,7 @@ class UpdateProfilRequest extends FormRequest
             'date_naissance' => 'required|date|before:-16 years',
             'telephone' => 'required|string|max:20',
             'adresse' => 'required|string|max:255',
+            'id_nationalite' => 'nullable|exists:nationalites,id_nationalite',
             'disponibilite' => 'nullable|string',
             'permis_b' => 'nullable|boolean',
             'vehicule_personnel' => 'nullable|boolean',
@@ -28,6 +29,12 @@ class UpdateProfilRequest extends FormRequest
             'annees_experience' => 'required|integer|min:0',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'cv' => 'nullable|mimes:pdf|max:10240',
+            // Tableaux pour les relations (optionnel pour l'instant si on gère via des routes séparées, mais bon à avoir)
+            'qualifications' => 'nullable|array',
+            'competences' => 'nullable|array',
+            'langues' => 'nullable|array',
+            'types_contrat_preferes' => 'nullable|array',
+            'secteurs_preferes' => 'nullable|array',
         ];
     }
 }

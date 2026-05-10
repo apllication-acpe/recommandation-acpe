@@ -94,6 +94,10 @@ Route::middleware(['auth'])->group(function () {
         // Configuration
         Route::get('/config', [AdminDashboardController::class, 'config'])->name('config');
         
+        // Messagerie Admin
+        Route::get('/messagerie', [\App\Http\Controllers\Candidat\MessagerieController::class, 'index'])->name('messagerie');
+        Route::post('/messagerie/store', [\App\Http\Controllers\Candidat\MessagerieController::class, 'store'])->name('messagerie.store');
+        
         // Secteurs
         Route::get('/config/secteurs', [AdminDashboardController::class, 'configSecteurs'])->name('config.secteurs');
         Route::get('/config/secteurs/create', [AdminDashboardController::class, 'createSecteur'])->name('config.secteurs.create');
@@ -204,10 +208,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/offres', [\App\Http\Controllers\Candidat\CandidatDashboardController::class, 'offres'])->name('offres.index');
         Route::get('/offres/{offre}', [\App\Http\Controllers\Candidat\CandidatDashboardController::class, 'showOffre'])->name('offres.show');
         Route::post('/offres/{offre}/postuler', [\App\Http\Controllers\Candidat\CandidatureController::class, 'postuler'])->name('offres.postuler');
-        Route::get('/messagerie', [\App\Http\Controllers\Candidat\CandidatDashboardController::class, 'messagerie'])->name('messagerie');
-        Route::get('/favoris', [\App\Http\Controllers\Candidat\CandidatDashboardController::class, 'favoris'])->name('favoris');
-        Route::get('/alertes', [\App\Http\Controllers\Candidat\CandidatDashboardController::class, 'alertes'])->name('alertes');
-        Route::get('/candidatures', [\App\Http\Controllers\Candidat\CandidatDashboardController::class, 'candidatures'])->name('candidatures');
+        Route::get('/messagerie', [\App\Http\Controllers\Candidat\MessagerieController::class, 'index'])->name('messagerie');
+        Route::post('/messagerie/store', [\App\Http\Controllers\Candidat\MessagerieController::class, 'store'])->name('messagerie.store');
+        Route::get('/favoris', [\App\Http\Controllers\Candidat\FavoriController::class, 'index'])->name('favoris');
+        Route::post('/favoris/{offre}/toggle', [\App\Http\Controllers\Candidat\FavoriController::class, 'toggle'])->name('favoris.toggle');
+        Route::get('/alertes', [\App\Http\Controllers\Candidat\AlerteController::class, 'index'])->name('alertes');
+        Route::post('/alertes', [\App\Http\Controllers\Candidat\AlerteController::class, 'store'])->name('alertes.store');
+        Route::post('/alertes/{alerte}/toggle', [\App\Http\Controllers\Candidat\AlerteController::class, 'toggle'])->name('alertes.toggle');
+        Route::delete('/alertes/{alerte}', [\App\Http\Controllers\Candidat\AlerteController::class, 'destroy'])->name('alertes.destroy');
+        Route::get('/candidatures', [\App\Http\Controllers\Candidat\CandidatureController::class, 'index'])->name('candidatures');
         Route::delete('/candidatures/{id}', [\App\Http\Controllers\Candidat\CandidatureController::class, 'destroy'])->name('candidatures.destroy');
         
         // Gestion du profil demandeur

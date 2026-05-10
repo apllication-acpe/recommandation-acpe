@@ -334,6 +334,19 @@ class Offre extends Model
     }
 
     /**
+     * Relation avec les demandeurs qui ont mis cette offre en favori.
+     */
+    public function demandeursFavoris(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Demandeur::class,
+            'favoris',
+            'id_offre',
+            'id_demandeur'
+        )->withTimestamps();
+    }
+
+    /**
      * Méthodes utilitaires
      */
 

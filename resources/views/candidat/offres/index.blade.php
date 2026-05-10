@@ -50,26 +50,30 @@
                         <div class="h-16 w-16 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-200 border border-gray-100 group-hover:bg-acpe-orange group-hover:text-white transition-colors">
                             <i class="fa-solid fa-building text-2xl"></i>
                         </div>
-                        <button class="h-10 w-10 bg-gray-50 text-gray-300 rounded-xl flex items-center justify-center hover:text-red-400 hover:bg-red-50 transition-colors">
-                            <i class="fa-solid fa-heart text-xs"></i>
+                        <button onclick="toggleFavori({{ $offre->id_offre }}, this)" 
+                            class="h-10 w-10 rounded-xl flex items-center justify-center transition-all 
+                            {{ in_array($offre->id_offre, $favorisIds) ? 'bg-red-50 text-red-400' : 'bg-gray-50 text-gray-300 hover:text-red-400 hover:bg-red-50' }}">
+                            <i class="fa-solid fa-heart {{ in_array($offre->id_offre, $favorisIds) ? '' : 'text-xs' }}"></i>
                         </button>
                     </div>
                     
                     <h3 class="text-base font-black text-[#204263] mb-2 group-hover:text-acpe-orange transition-colors leading-tight">{{ $offre->titre }}</h3>
-                    <p class="text-xs font-bold text-acpe-light-blue uppercase tracking-widest mb-6">{{ $offre->entreprise->nom_entreprise ?? 'Entreprise' }}</p>
+                    <p class="text-xs font-bold text-acpe-light-blue uppercase tracking-widest mb-6">{{ $offre->entreprise->raison_sociale ?? 'Entreprise' }}</p>
                     
                     <div class="flex flex-wrap gap-2 mb-8">
+                        @if($offre->localisations->count() > 0)
                         <span class="px-3 py-1.5 bg-gray-50 text-gray-400 text-[9px] font-black rounded-lg uppercase border border-gray-100 flex items-center">
-                            <i class="fa-solid fa-location-dot mr-1.5 text-acpe-orange/50"></i> {{ $offre->lieu }}
+                            <i class="fa-solid fa-location-dot mr-1.5 text-acpe-orange/50"></i> {{ $offre->localisations->first()->ville }}
                         </span>
+                        @endif
                         <span class="px-3 py-1.5 bg-gray-50 text-gray-400 text-[9px] font-black rounded-lg uppercase border border-gray-100">
-                            {{ $offre->typeContrat->libelle ?? 'CDI' }}
+                            {{ $offre->typeContrat->libelle ?? 'Type' }}
                         </span>
                     </div>
 
                     <div class="flex items-center justify-between pt-8 border-t border-gray-50">
-                        <span class="text-[10px] font-black text-gray-300 uppercase italic">il y a {{ $loop->index + 1 }} j</span>
-                        <a href="{{ route('candidat.offres.show', $offre) }}" class="bg-[#204263] text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-900/10 hover:bg-acpe-dark-blue transition-all">
+                        <span class="text-[10px] font-black text-gray-300 uppercase italic">il y a {{ $offre->created_at->diffForHumans(null, true) }}</span>
+                        <a href="{{ route('candidat.offres.show', $offre->id_offre) }}" class="bg-[#204263] text-white px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-blue-900/10 hover:bg-acpe-dark-blue transition-all">
                             Voir plus
                         </a>
                     </div>
@@ -81,6 +85,68 @@
                 </div>
             @endforelse
         </div>
+
+        @push('scripts')
+        <script>
+            function toggleFavori(offreId, btn) {
+                fetch(`/candidat/favoris/${offreId}/toggle`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => { throw err; });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        const icon = btn.querySelector('i');
+                        if (data.isFavori) {
+                            btn.classList.remove('bg-gray-50', 'text-gray-300');
+                            btn.classList.add('bg-red-50', 'text-red-400');
+                            icon.classList.remove('text-xs');
+                        } else {
+                            btn.classList.add('bg-gray-50', 'text-gray-300');
+                            btn.classList.remove('bg-red-50', 'text-red-400');
+                            icon.classList.add('text-xs');
+                        }
+
+                        // Notification Toast
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: data.message
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Attention',
+                            text: data.message || 'Une erreur est survenue.'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erreur de connexion',
+                        text: error.message || 'Impossible de contacter le serveur. Vérifiez votre connexion.'
+                    });
+                });
+            }
+        </script>
+        @endpush
 
         <!-- Pagination -->
         <div class="mt-12 flex justify-center">

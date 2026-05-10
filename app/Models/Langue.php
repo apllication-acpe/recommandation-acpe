@@ -26,6 +26,7 @@ class Langue extends Model
      */
     protected $fillable = [
         'libelle',
+        'code_iso',
     ];
 
     /**

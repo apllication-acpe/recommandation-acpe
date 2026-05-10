@@ -74,11 +74,17 @@
                                 <td class="px-6 py-5 text-right">
                                     <div class="flex justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <a href="{{ route('candidat.offres.show', $candidature->offre->id_offre) }}" class="p-2 bg-gray-50 text-gray-400 hover:text-acpe-blue rounded-lg transition-colors" title="Voir l'offre">
-                                            <i class="fa-solid fa-eye"></i>
+                                            <i class="fa-solid fa-eye text-sm"></i>
                                         </a>
-                                        <button class="p-2 bg-gray-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors" title="Annuler ma candidature">
-                                            <i class="fa-solid fa-trash-can"></i>
-                                        </button>
+                                        @if($candidature->statut === 'en_attente')
+                                            <form action="{{ route('candidat.candidatures.destroy', $candidature->id_candidature) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir retirer votre candidature ? Cette action est irréversible.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="p-2 bg-gray-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors" title="Retirer ma candidature">
+                                                    <i class="fa-solid fa-trash-can text-sm"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

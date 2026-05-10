@@ -99,15 +99,26 @@
                                 <option value="F" {{ old('sexe', $demandeur->sexe) == 'F' ? 'selected' : '' }}>Féminin</option>
                             </select>
                         </div>
-                        <div class="md:col-span-2 space-y-2">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nationalité</label>
+                            <select name="id_nationalite" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold text-[#204263] px-4 py-3 focus:ring-acpe-orange shadow-inner appearance-none">
+                                <option value="">Choisir une nationalité</option>
+                                @foreach($nationalites as $nat)
+                                    <option value="{{ $nat->id_nationalite }}" {{ old('id_nationalite', $demandeur->id_nationalite) == $nat->id_nationalite ? 'selected' : '' }}>
+                                        {{ $nat->libelle }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="md:col-span-1 space-y-2">
                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Adresse complète</label>
                             <input type="text" name="adresse" value="{{ old('adresse', $demandeur->adresse) }}" placeholder="Ex: 123 Rue de la Liberté, Dakar" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold text-[#204263] px-4 py-3 focus:ring-acpe-orange shadow-inner">
                         </div>
                         <div class="space-y-2">
                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Téléphone</label>
-                            <input type="text" name="telephone" value="{{ old('telephone', $demandeur->telephone) }}" placeholder="Ex: +221 77 000 00 00" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold text-[#204263] px-4 py-3 focus:ring-acpe-orange shadow-inner">
+                            <input type="text" name="telephone" value="{{ old('telephone', $demandeur->user->telephone) }}" placeholder="Ex: +221 77 000 00 00" class="w-full bg-gray-50 border-none rounded-xl text-xs font-bold text-[#204263] px-4 py-3 focus:ring-acpe-orange shadow-inner">
                         </div>
-                        <div class="space-y-2" x-data="{ isDebutant: {{ old('annees_experience', $demandeur->annees_experience) == 0 && $demandeur->annees_experience !== null ? 'true' : 'false' }} }">
+                        <div class="space-y-2" x-data="{ isDebutant: {{ ($demandeur->annees_experience == 0 && $demandeur->annees_experience !== null) ? 'true' : 'false' }} }">
                             <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center justify-between">
                                 Années d'expérience
                                 <label class="flex items-center space-x-2 cursor-pointer text-acpe-orange">
@@ -182,6 +193,36 @@
                                 </div>
                             </label>
                         </div>
+
+                        <!-- Types de Contrat Souhaités -->
+                        <div class="mt-8 pt-8 border-t border-emerald-100/50">
+                            <label class="text-[10px] font-black text-emerald-700 uppercase tracking-widest block mb-4">Types de contrat souhaités (Plusieurs choix possibles)</label>
+                            <div class="flex flex-wrap gap-3">
+                                @foreach($allTypeContrats as $type)
+                                    <label class="flex items-center px-4 py-2 bg-white rounded-xl border border-emerald-100 cursor-pointer hover:border-emerald-500 transition-all group">
+                                        <input type="checkbox" name="types_contrat_preferes[]" value="{{ $type->id_type_cont }}" 
+                                            {{ $demandeur->typesContratPreferes->contains($type->id_type_cont) ? 'checked' : '' }}
+                                            class="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500 h-4 w-4 mr-3">
+                                        <span class="text-[10px] font-black text-[#204263] uppercase group-hover:text-emerald-700 transition-colors">{{ $type->libelle }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Secteurs d'intérêt -->
+                        <div class="mt-8 pt-8 border-t border-emerald-100/50">
+                            <label class="text-[10px] font-black text-emerald-700 uppercase tracking-widest block mb-4">Secteurs d'intérêt (Optimise vos recommandations)</label>
+                            <div class="flex flex-wrap gap-3">
+                                @foreach($allSecteurs as $secteur)
+                                    <label class="flex items-center px-4 py-2 bg-white rounded-xl border border-emerald-100 cursor-pointer hover:border-emerald-500 transition-all group">
+                                        <input type="checkbox" name="secteurs_preferes[]" value="{{ $secteur->id_sect_act }}" 
+                                            {{ $demandeur->secteursActivitePreferes->contains($secteur->id_sect_act) ? 'checked' : '' }}
+                                            class="rounded border-emerald-300 text-emerald-600 focus:ring-emerald-500 h-4 w-4 mr-3">
+                                        <span class="text-[10px] font-black text-[#204263] uppercase group-hover:text-emerald-700 transition-colors">{{ $secteur->libelle }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -191,6 +232,7 @@
                         <button type="button" @click="section = 'exp'" :class="section === 'exp' ? 'border-acpe-orange text-acpe-orange bg-white' : 'border-transparent text-gray-400 hover:text-gray-600'" class="px-8 py-4 text-[10px] font-black border-b-2 transition-all uppercase tracking-widest">Expériences</button>
                         <button type="button" @click="section = 'edu'" :class="section === 'edu' ? 'border-acpe-orange text-acpe-orange bg-white' : 'border-transparent text-gray-400 hover:text-gray-600'" class="px-8 py-4 text-[10px] font-black border-b-2 transition-all uppercase tracking-widest">Diplômes</button>
                         <button type="button" @click="section = 'skill'" :class="section === 'skill' ? 'border-acpe-orange text-acpe-orange bg-white' : 'border-transparent text-gray-400 hover:text-gray-600'" class="px-8 py-4 text-[10px] font-black border-b-2 transition-all uppercase tracking-widest">Compétences</button>
+                        <button type="button" @click="section = 'lang'" :class="section === 'lang' ? 'border-acpe-orange text-acpe-orange bg-white' : 'border-transparent text-gray-400 hover:text-gray-600'" class="px-8 py-4 text-[10px] font-black border-b-2 transition-all uppercase tracking-widest">Langues</button>
                     </div>
 
                     <div class="p-10">
@@ -219,37 +261,52 @@
 
                         <div x-show="section === 'edu'" x-cloak class="space-y-6">
                             <div class="flex justify-between items-center mb-4">
-                                <p class="text-[10px] text-gray-400 font-bold italic">Vos diplômes et certifications</p>
-                                <button type="button" class="h-8 w-8 bg-emerald-50 text-emerald-500 rounded-lg flex items-center justify-center hover:scale-110 transition-transform">
-                                    <i class="fa-solid fa-plus text-xs"></i>
-                                </button>
+                                <p class="text-[10px] text-gray-400 font-bold italic">Sélectionnez vos diplômes et certifications</p>
                             </div>
-                            @forelse($demandeur->qualifications as $qualification)
-                                <div class="p-6 bg-gray-50 rounded-2xl border border-gray-100 flex items-start space-x-6">
-                                    <div class="h-12 w-12 bg-white rounded-xl flex items-center justify-center text-[#204263] border border-gray-100 shadow-sm">
-                                        <i class="fa-solid fa-graduation-cap text-lg"></i>
-                                    </div>
-                                    <div class="flex-1">
-                                        <h4 class="text-xs font-black text-[#204263] uppercase">{{ $qualification->libelle }}</h4>
-                                        <p class="text-[10px] font-bold text-acpe-orange mt-1">{{ $qualification->pivot->organisme ?? 'Organisme non précisé' }}</p>
-                                    </div>
-                                </div>
-                            @empty
-                                <p class="text-center text-[10px] font-bold text-gray-300 py-8">Aucun diplôme renseigné</p>
-                            @endforelse
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                @foreach($allQualifications as $qual)
+                                    <label class="flex items-center p-4 bg-gray-50 rounded-2xl border border-gray-100 cursor-pointer hover:border-acpe-orange transition-colors">
+                                        <input type="checkbox" name="qualifications[]" value="{{ $qual->id_qualification }}" 
+                                            {{ $demandeur->qualifications->contains($qual->id_qualification) ? 'checked' : '' }}
+                                            class="rounded border-gray-300 text-acpe-orange focus:ring-acpe-orange h-4 w-4 mr-3">
+                                        <div class="min-w-0">
+                                            <span class="text-[10px] font-black text-[#204263] uppercase block truncate">{{ $qual->libelle }}</span>
+                                            <span class="text-[9px] text-gray-400">{{ $qual->niveau }}</span>
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
                         </div>
 
-                        <div x-show="section === 'skill'" x-cloak>
-                            <div class="flex flex-wrap gap-3">
-                                @foreach($demandeur->competences as $competence)
-                                    <div class="px-4 py-2 bg-blue-50 text-acpe-blue rounded-xl text-[10px] font-black uppercase border border-blue-100 flex items-center space-x-2">
-                                        <span>{{ $competence->libelle }}</span>
-                                        <span class="text-[8px] opacity-50">Lvl {{ $competence->pivot->niveau }}</span>
-                                    </div>
+                        <div x-show="section === 'skill'" x-cloak class="space-y-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <p class="text-[10px] text-gray-400 font-bold italic">Cochez vos compétences techniques</p>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                @foreach($allCompetences as $comp)
+                                    <label class="flex items-center p-3 bg-blue-50/50 rounded-xl border border-blue-100 cursor-pointer hover:border-acpe-blue transition-colors">
+                                        <input type="checkbox" name="competences[]" value="{{ $comp->id_competence }}" 
+                                            {{ $demandeur->competences->contains($comp->id_competence) ? 'checked' : '' }}
+                                            class="rounded border-blue-300 text-acpe-blue focus:ring-acpe-blue h-4 w-4 mr-2">
+                                        <span class="text-[10px] font-black text-acpe-blue uppercase truncate">{{ $comp->libelle }}</span>
+                                    </label>
                                 @endforeach
-                                <button type="button" class="px-4 py-2 border-2 border-dashed border-gray-100 text-gray-300 rounded-xl text-[10px] font-black uppercase hover:border-acpe-orange hover:text-acpe-orange transition-all">
-                                    + Ajouter
-                                </button>
+                            </div>
+                        </div>
+
+                        <div x-show="section === 'lang'" x-cloak class="space-y-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <p class="text-[10px] text-gray-400 font-bold italic">Langues maîtrisées</p>
+                            </div>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                @foreach($allLangues as $lang)
+                                    <label class="flex items-center p-3 bg-purple-50/50 rounded-xl border border-purple-100 cursor-pointer hover:border-purple-400 transition-colors">
+                                        <input type="checkbox" name="langues[]" value="{{ $lang->id_langue }}" 
+                                            {{ $demandeur->langues->contains($lang->id_langue) ? 'checked' : '' }}
+                                            class="rounded border-purple-300 text-purple-600 focus:ring-purple-500 h-4 w-4 mr-2">
+                                        <span class="text-[10px] font-black text-purple-900 uppercase truncate">{{ $lang->libelle }}</span>
+                                    </label>
+                                @endforeach
                             </div>
                         </div>
                     </div>

@@ -12,7 +12,23 @@ class ProfilController extends Controller
     public function edit()
     {
         $demandeur = Auth::user()->demandeur;
-        return view('candidat.profil.edit', compact('demandeur'));
+        
+        $nationalites = \App\Models\Nationalite::orderBy('libelle')->get();
+        $allQualifications = \App\Models\Qualification::all();
+        $allCompetences = \App\Models\Competence::all();
+        $allLangues = \App\Models\Langue::all();
+        $allTypeContrats = \App\Models\TypeContrat::all();
+        $allSecteurs = \App\Models\SecteurActivite::all();
+
+        return view('candidat.profil.edit', compact(
+            'demandeur', 
+            'nationalites', 
+            'allQualifications', 
+            'allCompetences', 
+            'allLangues',
+            'allTypeContrats',
+            'allSecteurs'
+        ));
     }
 
     public function update(UpdateProfilRequest $request)
@@ -24,15 +40,19 @@ class ProfilController extends Controller
         }
 
         $data = $request->validated();
+        
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Mise à jour des infos utilisateur
+        if ($request->has('telephone')) {
+            $user->update(['telephone' => $request->telephone]);
+        }
 
         // Gestion de la photo
         if ($request->hasFile('photo')) {
             $path = $request->file('photo')->store('photos', 'public');
             $data['photo_path'] = $path;
-            
-            // Synchroniser avec le modèle User pour la compatibilité
-            /** @var \App\Models\User $user */
-            $user = Auth::user();
             $user->update(['avatar' => $path]);
         }
 
@@ -42,8 +62,26 @@ class ProfilController extends Controller
             $data['cv_path'] = $path;
         }
 
+        // Mise à jour du demandeur
         $demandeur->update($data);
 
-        return redirect()->route('candidat.dashboard')->with('success', 'Votre profil a été mis à jour avec succès.');
+        // Synchronisation des relations
+        if ($request->has('qualifications')) {
+            $demandeur->qualifications()->sync($request->qualifications);
+        }
+        if ($request->has('competences')) {
+            $demandeur->competences()->sync($request->competences);
+        }
+        if ($request->has('langues')) {
+            $demandeur->langues()->sync($request->langues);
+        }
+        if ($request->has('types_contrat_preferes')) {
+            $demandeur->typesContratPreferes()->sync($request->types_contrat_preferes);
+        }
+        if ($request->has('secteurs_preferes')) {
+            $demandeur->secteursActivitePreferes()->sync($request->secteurs_preferes);
+        }
+
+        return redirect()->back()->with('success', 'Votre profil a été mis à jour avec succès.');
     }
 }

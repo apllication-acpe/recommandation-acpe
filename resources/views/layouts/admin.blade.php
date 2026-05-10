@@ -7,8 +7,11 @@
 
         <title>@yield('title', 'Admin') | {{ config('app.name', 'ACPE') }}</title>
 
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+        {{-- Favicon ACPE --}}
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+        <link rel="shortcut icon" href="{{ asset('favicon.png') }}">
 
         <!-- Fonts & Icons -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -131,8 +134,8 @@
                 </a>
 
                 <!-- Messagerie -->
-                <a href="{{ route('messagerie.index') }}" 
-                   class="flex items-center px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('messagerie*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-[#b1c3d4] hover:text-white' }}">
+                <a href="{{ route('admin.messagerie') }}" 
+                   class="flex items-center px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('admin.messagerie*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-[#b1c3d4] hover:text-white' }}">
                     <i class="fa-solid fa-envelope text-lg w-8"></i>
                     <span x-show="sidebarOpen" class="font-semibold text-sm">Messagerie</span>
                 </a>
@@ -212,7 +215,7 @@
                 
                 <div class="flex items-center space-x-4 lg:space-x-6">
                     <!-- Notifications -->
-                    <a href="{{ route('messagerie.index') }}" class="relative cursor-pointer hover:opacity-80 transition-opacity text-white/70 lg:text-gray-400 lg:hover:text-[#204263]">
+                    <a href="{{ route('admin.messagerie') }}" class="relative cursor-pointer hover:opacity-80 transition-opacity text-white/70 lg:text-gray-400 lg:hover:text-[#204263]">
                         <i class="fa-regular fa-bell text-xl"></i>
                         @php $unreadCount = Auth::user()->unreadMessagesCount(); @endphp
                         @if($unreadCount > 0)

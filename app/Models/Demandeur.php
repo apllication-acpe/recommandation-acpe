@@ -164,6 +164,14 @@ class Demandeur extends Model
     }
 
     /**
+     * Relation avec les alertes emploi.
+     */
+    public function alertes(): HasMany
+    {
+        return $this->hasMany(Alerte::class, 'id_demandeur', 'id_demandeur');
+    }
+
+    /**
      * Relation avec les candidatures.
      */
     public function candidatures(): HasMany
@@ -278,6 +286,45 @@ class Demandeur extends Model
             'id_demandeur',
             'id_offre'
         );
+    }
+
+    /**
+     * Relation avec les secteurs d'activité préférés.
+     */
+    public function secteursActivitePreferes(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            SecteurActivite::class,
+            'demandeur_secteur_activite',
+            'id_demandeur',
+            'id_sect_act'
+        )->withTimestamps();
+    }
+
+    /**
+     * Relation avec les types de contrat préférés (souhaités par le demandeur).
+     */
+    public function typesContratPreferes(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            TypeContrat::class,
+            'demandeur_type_contrat',
+            'id_demandeur',
+            'id_type_cont'
+        )->withTimestamps();
+    }
+
+    /**
+     * Relation avec les offres mises en favoris.
+     */
+    public function favoris(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Offre::class,
+            'favoris',
+            'id_demandeur',
+            'id_offre'
+        )->withTimestamps();
     }
 
     /**

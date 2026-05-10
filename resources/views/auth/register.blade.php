@@ -6,7 +6,11 @@
     <title>Inscription - ACPE Reco</title>
     
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+        <!-- Favicon ACPE -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.png') }}"><link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
@@ -27,21 +31,21 @@
         }
     </script>
 </head>
-<body class="bg-gray-100 text-gray-800 antialiased h-screen overflow-hidden flex flex-col font-sans justify-center items-center px-4 sm:px-6 lg:px-8">
+<body class="bg-gray-100 text-gray-800 antialiased min-h-screen flex flex-col font-sans justify-center items-center py-8 px-4 sm:px-6 lg:px-8">
 
     <div class="max-w-xl w-full bg-white rounded-2xl shadow-xl overflow-hidden">
         
         <!-- Top Header -->
-        <div class="bg-[#7a9bb8] border-b-[4px] border-[#e3af8b] px-6 py-6 text-center relative">
-            <div class="flex items-center justify-center space-x-2 text-white mb-1">
-                <i class="fa-solid fa-user-plus text-xl"></i>
-                <h2 class="text-xl font-bold tracking-wide">Créer un compte</h2>
+        <div class="bg-[#204263] border-b-4 border-[#eda268] px-6 py-6 text-center relative">
+            <div class="flex items-center justify-center space-x-3 text-white mb-1">
+                <i class="fa-solid fa-user-plus text-lg text-[#eda268]"></i>
+                <h1 class="text-xl font-bold tracking-wide">Créer un compte</h1>
             </div>
-            <p class="text-white text-xs font-semibold tracking-wide">Rejoignez l'Agence Congolaise Pour l'Emploi</p>
+            <p class="text-[#7a9bb8] text-xs font-medium mt-1">Rejoignez l'Agence Congolaise Pour l'Emploi</p>
         </div>
 
         <!-- Formulaire -->
-        <div class="px-8 py-6">
+        <div class="px-4 sm:px-8 py-6">
             <form method="POST" action="{{ route('register') }}" class="space-y-4" enctype="multipart/form-data">
                 @csrf
                 
@@ -62,8 +66,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Nom -->
                     <div>
-                        <label for="nom" class="block text-xs font-bold text-[#3b5266] mb-1">Nom</label>
-                        <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#7a9bb8] focus-within:ring-1 focus-within:ring-[#7a9bb8] transition-all bg-white">
+                        <label for="nom" class="block text-xs font-bold text-[#204263] uppercase tracking-wider mb-1">Nom</label>
+                        <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#eda268] focus-within:ring-1 focus-within:ring-[#eda268]/30 transition-all bg-white">
                             <span class="inline-flex items-center px-3 rounded-l-md border-r border-[#c7d2db] text-[#8299b1] bg-[#f8fafc]">
                                 <i class="fa-solid fa-id-card text-sm"></i>
                             </span>
@@ -74,8 +78,8 @@
 
                     <!-- Prénom -->
                     <div>
-                        <label for="prenom" class="block text-xs font-bold text-[#3b5266] mb-1">Prénom</label>
-                        <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#7a9bb8] focus-within:ring-1 focus-within:ring-[#7a9bb8] transition-all bg-white">
+                        <label for="prenom" class="block text-xs font-bold text-[#204263] uppercase tracking-wider mb-1">Prénom</label>
+                        <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#eda268] focus-within:ring-1 focus-within:ring-[#eda268]/30 transition-all bg-white">
                             <span class="inline-flex items-center px-3 rounded-l-md border-r border-[#c7d2db] text-[#8299b1] bg-[#f8fafc]">
                                 <i class="fa-regular fa-user text-sm"></i>
                             </span>
@@ -87,8 +91,8 @@
 
                 <!-- Email Address -->
                 <div>
-                    <label for="email" class="block text-xs font-bold text-[#3b5266] mb-1">Adresse e-mail</label>
-                    <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#7a9bb8] focus-within:ring-1 focus-within:ring-[#7a9bb8] transition-all bg-white">
+                    <label for="email" class="block text-xs font-bold text-[#204263] uppercase tracking-wider mb-1">Adresse e-mail</label>
+                    <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#eda268] focus-within:ring-1 focus-within:ring-[#eda268]/30 transition-all bg-white">
                         <span class="inline-flex items-center px-3 rounded-l-md border-r border-[#c7d2db] text-[#8299b1] bg-[#f8fafc]">
                             <i class="fa-regular fa-envelope text-sm"></i>
                         </span>
@@ -100,8 +104,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Password -->
                     <div>
-                        <label for="password" class="block text-xs font-bold text-[#3b5266] mb-1">Mot de passe</label>
-                        <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#7a9bb8] focus-within:ring-1 focus-within:ring-[#7a9bb8] transition-all bg-white">
+                        <label for="password" class="block text-xs font-bold text-[#204263] uppercase tracking-wider mb-1">Mot de passe</label>
+                        <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#eda268] focus-within:ring-1 focus-within:ring-[#eda268]/30 transition-all bg-white">
                             <span class="inline-flex items-center px-3 rounded-l-md border-r border-[#c7d2db] text-[#8299b1] bg-[#f8fafc]">
                                 <i class="fa-solid fa-lock text-sm"></i>
                             </span>
@@ -112,8 +116,8 @@
 
                     <!-- Confirm Password -->
                     <div>
-                        <label for="password_confirmation" class="block text-xs font-bold text-[#3b5266] mb-1">Confirmer le mot de passe</label>
-                        <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#7a9bb8] focus-within:ring-1 focus-within:ring-[#7a9bb8] transition-all bg-white">
+                        <label for="password_confirmation" class="block text-xs font-bold text-[#204263] uppercase tracking-wider mb-1">Confirmer le mot de passe</label>
+                        <div class="flex rounded-md border border-[#c7d2db] shadow-sm focus-within:border-[#eda268] focus-within:ring-1 focus-within:ring-[#eda268]/30 transition-all bg-white">
                             <span class="inline-flex items-center px-3 rounded-l-md border-r border-[#c7d2db] text-[#8299b1] bg-[#f8fafc]">
                                 <i class="fa-solid fa-check-double text-sm"></i>
                             </span>
@@ -125,7 +129,7 @@
 
                 <!-- Avatar Upload -->
                 <div>
-                    <label for="avatar" class="block text-xs font-bold text-[#3b5266] mb-1">Photo de profil (Optionnel)</label>
+                    <label for="avatar" class="block text-xs font-bold text-[#204263] uppercase tracking-wider mb-1">Photo de profil (Optionnel)</label>
                     <div class="flex items-center space-x-4">
                         <div class="h-12 w-12 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center border-2 border-dashed border-gray-300">
                             <i class="fa-solid fa-user text-gray-400 text-xl"></i>

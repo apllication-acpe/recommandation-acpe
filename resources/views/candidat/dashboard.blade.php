@@ -27,7 +27,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Postulées</p>
-                    <p class="text-2xl font-black text-[#204263]">{{ $candidatures->count() }}</p>
+                    <p class="text-2xl font-black text-[#204263]">{{ $stats['candidatures'] }}</p>
                 </div>
             </div>
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:shadow-md transition-all">
@@ -36,7 +36,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Favoris</p>
-                    <p class="text-2xl font-black text-[#204263]">12</p>
+                    <p class="text-2xl font-black text-[#204263]">{{ $stats['favoris'] }}</p>
                 </div>
             </div>
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:shadow-md transition-all">
@@ -45,7 +45,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Alertes</p>
-                    <p class="text-2xl font-black text-[#204263]">3</p>
+                    <p class="text-2xl font-black text-[#204263]">{{ $stats['alertes'] }}</p>
                 </div>
             </div>
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-50 flex items-center space-x-4 hover:shadow-md transition-all">
@@ -54,7 +54,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Vues Profil</p>
-                    <p class="text-2xl font-black text-[#204263]">45</p>
+                    <p class="text-2xl font-black text-[#204263]">{{ $stats['vues'] }}</p>
                 </div>
             </div>
         </div>

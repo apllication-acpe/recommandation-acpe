@@ -28,17 +28,23 @@
                         </div>
                     </div>
                     
-                    <div class="flex flex-col items-center">
+                    <div class="flex flex-col md:flex-row items-center gap-4">
+                        <button onclick="toggleFavori({{ $offre->id_offre }}, this)" 
+                            class="h-14 w-14 rounded-2xl flex items-center justify-center transition-all border-2 
+                            {{ $isFavori ? 'bg-red-50 border-red-100 text-red-400' : 'bg-gray-50 border-gray-100 text-gray-300 hover:text-red-400 hover:bg-red-50' }}">
+                            <i class="fa-solid fa-heart text-xl"></i>
+                        </button>
+
                         @if($dejaPostule)
-                            <div class="px-8 py-3 bg-gray-100 text-gray-500 rounded-2xl font-black text-sm cursor-not-allowed flex items-center">
-                                <i class="fa-solid fa-check-circle mr-2"></i>
+                            <div class="px-8 py-4 bg-gray-100 text-gray-500 rounded-2xl font-black text-sm cursor-not-allowed flex items-center">
+                                <i class="fa-solid fa-check-circle mr-2 text-lg"></i>
                                 Déjà postulé
                             </div>
                         @else
                             <form action="{{ route('candidat.offres.postuler', $offre->id_offre) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="px-12 py-4 bg-acpe-orange text-white rounded-2xl font-black text-sm shadow-lg shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
-                                    <i class="fa-solid fa-paper-plane mr-2"></i>
+                                    <i class="fa-solid fa-paper-plane mr-2 text-lg"></i>
                                     Postuler maintenant
                                 </button>
                             </form>
@@ -47,6 +53,58 @@
                 </div>
             </div>
         </div>
+
+        @push('scripts')
+        <script>
+            function toggleFavori(offreId, btn) {
+                fetch(`/candidat/favoris/${offreId}/toggle`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.isFavori) {
+                            btn.classList.remove('bg-gray-50', 'border-gray-100', 'text-gray-300');
+                            btn.classList.add('bg-red-50', 'border-red-100', 'text-red-400');
+                        } else {
+                            btn.classList.add('bg-gray-50', 'border-gray-100', 'text-gray-300');
+                            btn.classList.remove('bg-red-50', 'border-red-100', 'text-red-400');
+                        }
+
+                        // Notification Toast
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
+                        });
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: data.message
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oups...',
+                        text: 'Une erreur est survenue lors de la mise à jour des favoris.'
+                    });
+                });
+            }
+        </script>
+        @endpush
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Job Details -->

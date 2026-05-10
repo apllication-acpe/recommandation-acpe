@@ -11,6 +11,20 @@ use Illuminate\Support\Facades\Auth;
 class CandidatureController extends Controller
 {
     /**
+     * Liste des candidatures du demandeur.
+     */
+    public function index()
+    {
+        $demandeur = Auth::user()->demandeur;
+        $candidatures = $demandeur->candidatures()
+            ->with(['offre.entreprise', 'offre.typeContrat'])
+            ->latest('date_candidature')
+            ->paginate(10);
+
+        return view('candidat.candidatures.index', compact('candidatures'));
+    }
+
+    /**
      * Postuler à une offre.
      */
     public function postuler(Request $request, $id_offre)

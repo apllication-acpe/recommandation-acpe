@@ -39,11 +39,13 @@ class CandidatDashboardController extends Controller
         $nbExperiences = \App\Models\Experience::where('id_demandeur', $demandeur->id_demandeur)->count();
         if ($nbExperiences > 0) $completion += 30; // Bonus pour avoir rempli ses expériences
 
-        // Pour l'instant, les tables pivots demandeur_diplome, demandeur_competence, demandeur_langue n'existent pas dans le schéma actuel.
-        // On récupère via les qualifications si existantes, sinon 0.
-        $nbDiplomes = \Illuminate\Support\Facades\DB::table('qualification_demandeur')->where('id_demandeur', $demandeur->id_demandeur)->count();
-        $nbCompetences = 0;
-        $nbLangues = 0;
+        // Statistiques pour le dashboard
+        $stats = [
+            'candidatures' => $demandeur->candidatures()->count(),
+            'favoris' => $demandeur->favoris()->count(),
+            'alertes' => $demandeur->alertes()->where('active', true)->count(),
+            'vues' => 0,    // À implémenter plus tard
+        ];
 
         // Limiter la complétion à 100%
         $completion = min(100, $completion);
@@ -53,9 +55,7 @@ class CandidatDashboardController extends Controller
             'recommandations',
             'candidatures',
             'completion',
-            'nbDiplomes',
-            'nbCompetences',
-            'nbLangues',
+            'stats',
             'nbExperiences'
         ));
     }
@@ -67,12 +67,16 @@ class CandidatDashboardController extends Controller
 
     public function offres()
     {
+        $demandeur = Auth::user()->demandeur;
         $offres = \App\Models\Offre::where('active', true)
-            ->with(['entreprise', 'typeContrat'])
+            ->with(['entreprise', 'typeContrat', 'localisations'])
             ->latest()
             ->paginate(12);
 
-        return view('candidat.offres.index', compact('offres'));
+        // Récupérer les IDs des offres en favori pour ce demandeur
+        $favorisIds = $demandeur->favoris()->pluck('offres.id_offre')->toArray();
+
+        return view('candidat.offres.index', compact('offres', 'favorisIds'));
     }
 
     public function messagerie(Request $request)
@@ -132,10 +136,11 @@ class CandidatDashboardController extends Controller
 
     public function showOffre($id)
     {
-        $offre = Offre::with(['entreprise', 'typeContrat', 'secteurActivite'])->findOrFail($id);
+        $offre = Offre::with(['entreprise', 'typeContrat', 'secteurActivite', 'localisations'])->findOrFail($id);
         $demandeur = Auth::user()->demandeur;
         $dejaPostule = $demandeur ? $demandeur->hasPostulated($offre) : false;
+        $isFavori = $demandeur ? $demandeur->favoris()->where('offres.id_offre', $offre->id_offre)->exists() : false;
 
-        return view('candidat.offres.show', compact('offre', 'dejaPostule'));
+        return view('candidat.offres.show', compact('offre', 'dejaPostule', 'isFavori'));
     }
 }
