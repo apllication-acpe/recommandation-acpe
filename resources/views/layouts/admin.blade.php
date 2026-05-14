@@ -122,9 +122,17 @@
 
                 <!-- Offres & Candidatures -->
                 <a href="{{ route('admin.offres') }}" 
-                   class="flex items-center px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('admin.offres*') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-[#b1c3d4] hover:text-white' }}">
+                   class="flex items-center px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('admin.offres') ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-[#b1c3d4] hover:text-white' }}">
                     <i class="fa-solid fa-briefcase text-lg w-8"></i>
                     <span x-show="sidebarOpen" class="font-semibold text-sm">Offres d'emploi</span>
+                </a>
+                
+                <a href="{{ route('admin.offres.acpe') }}" 
+                   class="flex items-center px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('admin.offres.acpe') ? 'bg-white/10 text-white shadow-lg' : 'hover:bg-white/5 text-[#b1c3d4] hover:text-white' }}">
+                    <i class="fa-solid fa-spider text-lg w-8"></i>
+                    <span x-show="sidebarOpen" class="font-semibold text-sm flex items-center gap-2">
+                        ACPE.CG <span class="bg-[#eda268] text-white text-[8px] px-1.5 py-0.5 rounded-md uppercase tracking-wider font-black">Live</span>
+                    </span>
                 </a>
 
                 <a href="{{ route('admin.candidatures') }}" 

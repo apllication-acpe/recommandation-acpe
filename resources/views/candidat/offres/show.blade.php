@@ -19,8 +19,14 @@
                             </p>
                             <p class="text-sm font-bold text-gray-500 flex items-center">
                                 <i class="fa-solid fa-location-dot mr-2 text-acpe-orange"></i>
-                                {{ $offre->localisations->first()->ville ?? 'Sénégal' }}
+                                {{ $offre->localisations->first()->ville ?? ($offre->departement ?? 'Congo') }}
                             </p>
+                            @if($offre->source === 'acpe_scraping')
+                                <div class="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg border border-blue-100 flex items-center gap-2">
+                                    <i class="fa-solid fa-spider text-xs"></i>
+                                    <span class="text-[10px] font-black uppercase tracking-widest">Source: ACPE.CG</span>
+                                </div>
+                            @endif
                             <p class="text-sm font-bold text-gray-500 flex items-center">
                                 <i class="fa-solid fa-calendar-day mr-2 text-acpe-orange"></i>
                                 Publié le {{ $offre->date_publication->format('d M Y') }}
@@ -40,6 +46,11 @@
                                 <i class="fa-solid fa-check-circle mr-2 text-lg"></i>
                                 Déjà postulé
                             </div>
+                        @elseif($offre->source === 'acpe_scraping')
+                            <a href="{{ $offre->url_source }}" target="_blank" class="px-12 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all flex items-center">
+                                <i class="fa-solid fa-arrow-up-right-from-square mr-2 text-lg"></i>
+                                Postuler sur ACPE.CG
+                            </a>
                         @else
                             <form action="{{ route('candidat.offres.postuler', $offre->id_offre) }}" method="POST">
                                 @csrf

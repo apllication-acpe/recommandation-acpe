@@ -44,6 +44,12 @@ class Offre extends Model
         'id_type_cont',
         'id_sect_act',
         'nb_vues',
+        'acpe_id',
+        'url_source',
+        'source',
+        'qualification_requise',
+        'departement',
+        'derniere_synchro',
     ];
 
     /**
@@ -67,6 +73,7 @@ class Offre extends Model
         'date_expiration' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'derniere_synchro' => 'datetime',
     ];
 
     /**

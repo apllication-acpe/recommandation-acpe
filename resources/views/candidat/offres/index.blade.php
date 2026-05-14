@@ -47,8 +47,16 @@
             @forelse($offres as $offre)
                 <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-50 hover:shadow-2xl hover:-translate-y-2 transition-all group">
                     <div class="flex justify-between items-start mb-8">
-                        <div class="h-16 w-16 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-200 border border-gray-100 group-hover:bg-acpe-orange group-hover:text-white transition-colors">
-                            <i class="fa-solid fa-building text-2xl"></i>
+                        <div class="flex items-center gap-2">
+                            <div class="h-16 w-16 bg-gray-50 rounded-2xl flex items-center justify-center text-gray-200 border border-gray-100 group-hover:bg-acpe-orange group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-building text-2xl"></i>
+                            </div>
+                            @if($offre->source === 'acpe_scraping')
+                                <div class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl border border-blue-100 flex items-center gap-1.5 animate-pulse">
+                                    <i class="fa-solid fa-spider text-[10px]"></i>
+                                    <span class="text-[9px] font-black uppercase tracking-widest">ACPE</span>
+                                </div>
+                            @endif
                         </div>
                         <button onclick="toggleFavori({{ $offre->id_offre }}, this)" 
                             class="h-10 w-10 rounded-xl flex items-center justify-center transition-all 
@@ -64,6 +72,10 @@
                         @if($offre->localisations->count() > 0)
                         <span class="px-3 py-1.5 bg-gray-50 text-gray-400 text-[9px] font-black rounded-lg uppercase border border-gray-100 flex items-center">
                             <i class="fa-solid fa-location-dot mr-1.5 text-acpe-orange/50"></i> {{ $offre->localisations->first()->ville }}
+                        </span>
+                        @elseif($offre->departement)
+                        <span class="px-3 py-1.5 bg-gray-50 text-gray-400 text-[9px] font-black rounded-lg uppercase border border-gray-100 flex items-center">
+                            <i class="fa-solid fa-location-dot mr-1.5 text-acpe-orange/50"></i> {{ $offre->departement }}
                         </span>
                         @endif
                         <span class="px-3 py-1.5 bg-gray-50 text-gray-400 text-[9px] font-black rounded-lg uppercase border border-gray-100">

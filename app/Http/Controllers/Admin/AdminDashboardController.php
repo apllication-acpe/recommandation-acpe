@@ -225,6 +225,82 @@ class AdminDashboardController extends Controller
         return view('admin.offres.index', compact('offres'));
     }
 
+    /**
+     * Page dédiée aux offres importées depuis acpe.cg
+     */
+    public function offresAcpe(Request $request)
+    {
+        $query = Offre::with(['entreprise', 'typeContrat'])
+            ->where('source', 'acpe_scraping');
+
+        // Filtres
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('titre', 'like', "%{$search}%")
+                  ->orWhere('departement', 'like', "%{$search}%")
+                  ->orWhere('qualification_requise', 'like', "%{$search}%")
+                  ->orWhereHas('entreprise', fn($e) => $e->where('raison_sociale', 'like', "%{$search}%"));
+            });
+        }
+        if ($request->filled('dept')) {
+            $query->where('departement', 'like', '%' . $request->dept . '%');
+        }
+        if ($request->filled('type_cont')) {
+            $query->where('id_type_cont', $request->type_cont);
+        }
+
+        $offres = $query->latest()->paginate(20)->withQueryString();
+
+        // Stats
+        $stats = [
+            'total'          => Offre::where('source', 'acpe_scraping')->count(),
+            'actives'        => Offre::where('source', 'acpe_scraping')->where('active', true)->count(),
+            'entreprises'    => Offre::where('source', 'acpe_scraping')->distinct('id_entreprise')->count('id_entreprise'),
+            'derniere_synchro' => Offre::where('source', 'acpe_scraping')->latest('derniere_synchro')->value('derniere_synchro'),
+        ];
+        $stats['derniere_synchro'] = $stats['derniere_synchro']
+            ? \Carbon\Carbon::parse($stats['derniere_synchro'])
+            : null;
+
+        // Listes pour filtres
+        $departements = Offre::where('source', 'acpe_scraping')
+            ->whereNotNull('departement')
+            ->distinct()
+            ->pluck('departement')
+            ->sort()
+            ->values();
+        $typesContrat = TypeContrat::orderBy('libelle')->get();
+
+        return view('admin.offres.acpe_scraping', compact('offres', 'stats', 'departements', 'typesContrat'));
+    }
+
+    /**
+     * Déclencher une synchronisation rapide via AJAX (5 pages = ~60 offres)
+     */
+    public function syncAcpe(Request $request)
+    {
+        $pages = min((int) $request->input('pages', 5), 20); // max 20 pages par appel AJAX
+
+        try {
+            \Illuminate\Support\Facades\Artisan::call('acpe:scrape-offres', [
+                '--pages' => $pages,
+                '--delay' => 0,
+            ]);
+            $output = \Illuminate\Support\Facades\Artisan::output();
+            return response()->json([
+                'success' => true,
+                'message' => "Synchronisation terminée ({$pages} pages)",
+                'output'  => $output,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function createOffre()
     {
         $entreprises    = Entreprise::orderBy('raison_sociale')->get();

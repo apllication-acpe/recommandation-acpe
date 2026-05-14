@@ -36,6 +36,11 @@ class CandidatureController extends Controller
         }
 
         $offre = Offre::findOrFail($id_offre);
+        
+        // Empêcher de postuler en interne à une offre externe (ACPE)
+        if ($offre->source === 'acpe_scraping') {
+            return redirect($offre->url_source)->with('info', 'Cette offre provient de l\'ACPE. Veuillez postuler directement sur leur site.');
+        }
 
         // Vérifier si déjà postulé
         if ($demandeur->hasPostulated($offre)) {

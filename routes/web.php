@@ -64,6 +64,8 @@ Route::middleware(['auth'])->group(function () {
         
         // Offres
         Route::get('/offres', [AdminDashboardController::class, 'offres'])->name('offres');
+        Route::get('/offres/acpe', [AdminDashboardController::class, 'offresAcpe'])->name('offres.acpe');
+        Route::post('/offres/acpe/sync', [AdminDashboardController::class, 'syncAcpe'])->name('offres.acpe.sync');
         Route::get('/offres/create', [AdminDashboardController::class, 'createOffre'])->name('offres.create');
         Route::post('/offres/store', [AdminDashboardController::class, 'storeOffre'])->name('offres.store');
         Route::get('/offres/moderer', [AdminDashboardController::class, 'modererOffres'])->name('offres.moderer');
